@@ -28,6 +28,6 @@ $ docker services ls
 
 [![N|Solid](https://usuarioperu.com/wp-content/uploads/2019/04/HA-postgres.png)](https://usuarioperu.com/wp-content/uploads/2019/04/HA-postgres.png)
 
-The master db is accessible on localhost:5000 and the replicas on 5001
+The master db is accessible on localhost:5000 or IP, depending on the configuration of pg_hba.conf, and the replicas on 5001.
 
 [![N|Solid](http://usuarioperu.com/wp-content/uploads/2019/04/HA-postgres-validation.png)](http://usuarioperu.com/wp-content/uploads/2019/04/HA-postgres-validation.png)
