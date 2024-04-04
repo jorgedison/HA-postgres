@@ -1,12 +1,24 @@
 version: '3.3'
+
+x-common-settings: &common-settings
+  image: seocahill/patroni:1.2.5
+  secrets: 
+    - patroni.yml
+  env_file:
+    - test.env
+  networks:
+    - dbs
+  entrypoint: patroni
+  command: /run/secrets/patroni.yml
+
 services:
 
   haproxy:
     image: haproxy:alpine
     ports:
-        - "5000:5000"
-        - "5001:5001"
-        - "8008:8008"
+      - "5000:5000"
+      - "5001:5001"
+      - "8008:8008"
     configs: 
       - haproxy_cfg
     networks:
@@ -22,52 +34,28 @@ services:
     command: /bin/sh /etcd_cfg
 
   dbnode1:
-    image: seocahill/patroni:1.2.5
-    secrets: 
-      - patroni.yml
+    <<: *common-settings
     environment:
       - PATRONI_NAME=dbnode1
       - PATRONI_POSTGRESQL_DATA_DIR=data/dbnode1
       - PATRONI_POSTGRESQL_CONNECT_ADDRESS=dbnode1:5432
       - PATRONI_RESTAPI_CONNECT_ADDRESS=dbnode1:8008
-    env_file:
-      - test.env
-    networks:
-      - dbs
-    entrypoint: patroni
-    command: /run/secrets/patroni.yml
 
   dbnode2:
-    image: seocahill/patroni:1.2.5
-    secrets: 
-      - patroni.yml
+    <<: *common-settings
     environment:
       - PATRONI_NAME=dbnode2
       - PATRONI_POSTGRESQL_DATA_DIR=data/dbnode2
       - PATRONI_POSTGRESQL_CONNECT_ADDRESS=dbnode2:5432
       - PATRONI_RESTAPI_CONNECT_ADDRESS=dbnode2:8008
-    env_file:
-      - test.env
-    networks:
-      - dbs
-    entrypoint: patroni
-    command: /run/secrets/patroni.yml
-    
+
   dbnode3:
-    image: seocahill/patroni:1.2.5
-    secrets: 
-      - patroni.yml
+    <<: *common-settings
     environment:
       - PATRONI_NAME=dbnode3
       - PATRONI_POSTGRESQL_DATA_DIR=data/dbnode3
       - PATRONI_POSTGRESQL_CONNECT_ADDRESS=dbnode3:5432
       - PATRONI_RESTAPI_CONNECT_ADDRESS=dbnode3:8008
-    env_file:
-      - test.env
-    networks:
-      - dbs
-    entrypoint: patroni
-    command: /run/secrets/patroni.yml
 
 networks:
   dbs:
@@ -75,10 +63,10 @@ networks:
 
 configs:
   haproxy_cfg:
-    file: config/haproxy.cfg
+    file: ./config/haproxy.cfg
   etcd_cfg:
-    file: config/etcd.sh
+    file: ./config/etcd.sh
 
 secrets:
   patroni.yml:
-    file: patroni.yml
+    file: ./patroni.yml
